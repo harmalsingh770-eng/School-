@@ -1,56 +1,77 @@
-import React from "react";
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
-import { signInWithPopup } from "firebase/auth";
-import { auth, provider } from "../firebase";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
-const ADMIN_EMAIL = "your@email.com";
+export default function LoginScreen() {
+  const [code, setCode] = useState("");
+  const [password, setPassword] = useState("");
+  const navigate = useNavigate();
 
-export default function LoginScreen({ navigation }) {
-  const handleLogin = async () => {
-    try {
-      const result = await signInWithPopup(auth, provider);
-      const user = result.user;
-
-      if (user.email === ADMIN_EMAIL) {
-        navigation.replace("Admin");
-      } else {
-        navigation.replace("SchoolSetup");
-      }
-    } catch (err) {
-      console.log(err);
+  const handleLogin = () => {
+    if (!code || !password) {
+      alert("Fill all fields");
+      return;
     }
+
+    navigate("/dashboard");
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Welcome</Text>
+    <div style={styles.container}>
+      <div style={styles.card}>
+        <h2 style={{ marginBottom: 20 }}>School Login</h2>
 
-      <TouchableOpacity style={styles.button} onPress={handleLogin}>
-        <Text style={styles.buttonText}>Continue with Google</Text>
-      </TouchableOpacity>
-    </View>
+        <input
+          style={styles.input}
+          placeholder="School Code"
+          onChange={(e) => setCode(e.target.value)}
+        />
+
+        <input
+          style={styles.input}
+          type="password"
+          placeholder="Password"
+          onChange={(e) => setPassword(e.target.value)}
+        />
+
+        <button style={styles.button} onClick={handleLogin}>
+          Login
+        </button>
+      </div>
+    </div>
   );
 }
 
-const styles = StyleSheet.create({
+const styles = {
   container: {
-    flex: 1,
-    backgroundColor: "#0f172a",
+    height: "100vh",
+    background: "linear-gradient(135deg, #4facfe, #00f2fe)",
+    display: "flex",
     justifyContent: "center",
     alignItems: "center",
   },
-  title: {
-    fontSize: 28,
-    color: "#fff",
-    marginBottom: 30,
+  card: {
+    background: "#fff",
+    padding: 30,
+    borderRadius: 12,
+    width: 300,
+    boxShadow: "0 10px 30px rgba(0,0,0,0.2)",
+    textAlign: "center",
+  },
+  input: {
+    width: "100%",
+    padding: 10,
+    marginBottom: 15,
+    borderRadius: 6,
+    border: "1px solid #ccc",
   },
   button: {
-    backgroundColor: "#6366f1",
-    padding: 15,
-    borderRadius: 12,
-  },
-  buttonText: {
+    width: "100%",
+    padding: 10,
+    background: "#4facfe",
     color: "#fff",
+    border: "none",
+    borderRadius: 6,
+    cursor: "pointer",
     fontWeight: "bold",
   },
-});
+};
